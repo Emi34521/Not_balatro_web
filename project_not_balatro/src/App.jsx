@@ -8,7 +8,9 @@ function App() {
 
   return (
     <div className="game">
-      <h1 className="game__title">Not Balatro</h1>
+      <h1 className="game__title">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+        </link>Not Balatro</h1>
       <Hand cards={hand} />
     </div>
   )

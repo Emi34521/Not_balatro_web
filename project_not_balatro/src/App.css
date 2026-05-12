@@ -10,6 +10,9 @@
 }
 
 .game__title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.2rem; /* esta fuente es grande, reduce un poco */
+  letter-spacing: 0.05em;
   color: #e8c97d;
   font-size: 2rem;
   font-weight: 700;

@@ -62,10 +62,10 @@
 
 /* ── Rangos ─────────────────────────────────────────────── */
 .card__rank {
-  font-size: 14px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px; 
   font-weight: 700;
   line-height: 1;
-  font-family: 'Georgia', serif;
 }
 
 .card__rank--top {
@@ -135,4 +135,13 @@
   font-size: 28px;
   color: rgba(200, 0, 0, 0.6);
   pointer-events: none;
+}
+.card__face-art {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 54px;
+  object-fit: contain;
 }

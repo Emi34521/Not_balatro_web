@@ -6,8 +6,15 @@ const SUIT_SYMBOLS = {
   clubs: '♣',
   spades: '♠',
 }
-
+const FACE_RANKS = ['J', 'Q', 'K']
 const RED_SUITS = ['hearts', 'diamonds']
+// Importas dinámicamente 
+const faceImages = import.meta.glob('../../assets/faces/*.svg', { eager: true })
+
+function getFaceImage(rank, suit) {
+  const key = `../../assets/faces/${rank}-${suit}.svg`
+  return faceImages[key]?.default ?? null
+}
 
 /**
  * Componente individual de carta de poker.
@@ -64,11 +71,19 @@ export function Card({
         <div className="card__back" />
       ) : (
         <>
-          <span className="card__rank card__rank--top">{rank}</span>
-          <span className="card__suit-top">{symbol}</span>
-          <span className="card__suit-center">{symbol}</span>
-          <span className="card__suit-bottom">{symbol}</span>
-          <span className="card__rank card__rank--bottom">{rank}</span>
+        <span className="card__rank card__rank--top">{rank}</span>
+        <span className="card__suit-top">{symbol}</span>
+        {FACE_RANKS.includes(rank) ? (
+      <img
+      className="card__face-art"
+      src={getFaceImage(rank, suit)}
+      alt={`${rank} de ${suit}`}
+    />
+  ) : (
+  <span className="card__suit-center">{symbol}</span>
+  )}
+  <span className="card__suit-bottom">{symbol}</span>
+  <span className="card__rank card__rank--bottom">{rank}</span>
           {debuffed && <span className="card__debuff-badge">✕</span>}
         </>
       )}
