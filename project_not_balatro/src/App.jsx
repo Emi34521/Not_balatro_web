@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Hand } from './components/Hand/Hand'
+import { Button } from './components/Button/Button'
 import { createDeck, dealCards } from './utils/deck'
 import { evaluateHand, HAND_TYPES } from './logic/evaluateHand'
 import './App.css'
@@ -17,10 +18,20 @@ const HAND_SCORES = {
   [HAND_TYPES.STRAIGHT_FLUSH]: { chips: 100, mult: 8 },
   [HAND_TYPES.ROYAL_FLUSH]:    { chips: 100, mult: 8 },
 }
+const SUIT_ORDER = { spades: 0, hearts: 1, diamonds: 2, clubs: 3 }
 
 function App() {
   const [hand, setHand] = useState(() => dealCards(createDeck(), 8).hand)
   const [selectedIds, setSelectedIds] = useState([])
+
+  const [sortMode, setSortMode] = useState(null) // null | 'rank' | 'suit'
+    const displayHand = useMemo(() => {
+    if (sortMode === 'rank') return [...hand].sort((a, b) => a.value - b.value)
+    if (sortMode === 'suit') return [...hand].sort(
+      (a, b) => SUIT_ORDER[a.suit] - SUIT_ORDER[b.suit] || a.value - b.value
+    )
+    return hand
+  }, [hand, sortMode])
 
   // Seleccionar / deseleccionar carta (máx 5)
   const handleCardSelect = ({ id }) => {
@@ -48,15 +59,14 @@ function App() {
 
   return (
     <div className="game">
-      <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"></link>
       <h1 className="game__title">Not Balatro</h1>
-      {/* Resultado de la evaluación */}
+ 
       <div className="game__eval">
         {evaluation && score ? (
           <>
             <span className="eval__hand-name">{evaluation.handName}</span>
             <span className="eval__chips">{score.chips} chips</span>
-            <span className="eval__mult">×{score.mult}</span>
+            <span className="eval__mult">x{score.mult}</span>
             <span className="eval__total">{score.chips * score.mult} pts</span>
           </>
         ) : (
@@ -67,22 +77,39 @@ function App() {
           </span>
         )}
       </div>
-
-      {/* Mano */}
+ 
       <Hand
-        cards={hand}
+        cards={displayHand}
         selectedIds={selectedIds}
         onCardSelect={handleCardSelect}
       />
-
-      {/* Acciones */}
+ 
       <div className="game__actions">
-        <button className="btn" onClick={handleNewHand}>
+        <Button variant="primary" size="lg" disabled={selectedIds.length === 0}
+          onClick={() => console.log('Play hand:', selectedIds)}>
+          Play Hand
+        </Button>
+        <Button variant="danger" size="lg" disabled={selectedIds.length === 0}
+          onClick={() => console.log('Discard:', selectedIds)}>
+          Discard ({selectedIds.length})
+        </Button>
+      </div>
+ 
+      <div className="game__secondary">
+        <Button variant="outline" size="sm" onClick={() => handleSort('rank')}
+          className={sortMode === 'rank' ? 'btn--active' : ''}>
+          Sort Rank
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => handleSort('suit')}
+          className={sortMode === 'suit' ? 'btn--active' : ''}>
+          Sort Suit
+        </Button>
+        <Button variant="ghost" size="sm" onClick={handleNewHand}>
           Nueva mano
-        </button>
+        </Button>
       </div>
     </div>
   )
 }
-
+ 
 export default App
