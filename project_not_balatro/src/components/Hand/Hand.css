@@ -1,0 +1,18 @@
+/* ── Contenedor de la mano ──────────────────────────────── */
+.hand {
+  position: relative;
+  /* La altura es la carta + espacio para el hover */
+  height: 160px;
+  margin: 0 auto;
+  /* Permite que las cartas se superpongan sin clipear */
+  overflow: visible;
+}
+
+.hand--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  height: 120px;
+}
