@@ -1,0 +1,115 @@
+/* ── Contenedor ─────────────────────────────────────────── */
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 50px;
+  font-family: 'Press Start 2P', monospace;
+}
+
+.score-display--idle {
+  justify-content: center;
+}
+
+/* ── Hint ───────────────────────────────────────────────── */
+.score-display__hint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.03em;
+}
+
+/* ── Nombre de la mano ──────────────────────────────────── */
+.score-display__hand-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e8c97d;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: fadeSlideDown 0.35s ease forwards;
+}
+
+/* ── Ecuación chips × mult = total ──────────────────────── */
+.score-display__equation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.score-display__operator {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 300;
+}
+
+/* ── Bloques chips / mult / total ───────────────────────── */
+.score-display__chips,
+.score-display__mult,
+.score-display__total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.score-display__label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Valores numéricos */
+.score-display__value {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 0.1s ease;
+}
+
+.score-display__value--chips {
+  color: #7ec8f5;
+  min-width: 60px;
+  text-align: center;
+}
+
+.score-display__value--mult {
+  color: #f57c7c;
+}
+
+.score-display__value--total {
+  color: #fff;
+  font-size: 34px;
+}
+
+/* Pulso cuando se añaden chips */
+.score-display__chips--active .score-display__value--chips {
+  animation: chipPulse 0.2s ease;
+}
+
+/* Entrada del multiplicador */
+.score-display__mult--enter {
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Entrada del total */
+.score-display__total--enter {
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── Keyframes ──────────────────────────────────────────── */
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes chipPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}

@@ -6,7 +6,7 @@
   gap: 6px;
   border-radius: 8px;
   border: 1.5px solid transparent;
-  font-family: system-ui, sans-serif;
+  font-family: 'Press Start 2P', monospace;
   font-weight: 600;
   cursor: pointer;
   transition:
@@ -24,38 +24,33 @@
   pointer-events: none;
 }
 
-.btn--full {
-  width: 100%;
-}
+.btn--full { width: 100%; }
 
-/* ── Tamaños ────────────────────────────────────────────── */
+/* ── Tamaños — ajustados para convivir con Press Start 2P en el título ── */
 .btn--sm {
-  font-size: 12px;
-  padding: 6px 14px;
+  font-size: 13px;
+  padding: 8px 16px;
   border-radius: 6px;
-  gap: 4px;
 }
 
 .btn--md {
-  font-size: 14px;
-  padding: 10px 20px;
+  font-size: 15px;
+  padding: 11px 22px;
 }
 
 .btn--lg {
   font-size: 16px;
-  padding: 13px 28px;
+  padding: 14px 32px;
   border-radius: 10px;
   gap: 8px;
 }
 
-/* Botón solo icono: cuadrado */
-.btn--icon-only.btn--sm { padding: 6px;  width: 28px; height: 28px; }
-.btn--icon-only.btn--md { padding: 10px; width: 40px; height: 40px; }
-.btn--icon-only.btn--lg { padding: 13px; width: 48px; height: 48px; }
+/* Icono solo */
+.btn--icon-only.btn--sm { padding: 8px;  width: 34px; height: 34px; }
+.btn--icon-only.btn--md { padding: 11px; width: 44px; height: 44px; }
+.btn--icon-only.btn--lg { padding: 14px; width: 52px; height: 52px; }
 
 /* ── Variantes ──────────────────────────────────────────── */
-
-/* Primary — Play Hand */
 .btn--primary {
   background: #e8c97d;
   color: #0d1b2a;
@@ -64,14 +59,12 @@
 .btn--primary:hover:not(:disabled) {
   background: #f0d88a;
   border-color: #f0d88a;
-  box-shadow: 0 4px 14px rgba(232, 201, 125, 0.35);
+  box-shadow: 0 4px 16px rgba(232, 201, 125, 0.38);
 }
 .btn--primary:active:not(:disabled) {
   background: #d4b56a;
-  border-color: #d4b56a;
 }
 
-/* Danger — Discard */
 .btn--danger {
   background: #7c1f1f;
   color: #ffb3b3;
@@ -80,13 +73,12 @@
 .btn--danger:hover:not(:disabled) {
   background: #9e2a2a;
   border-color: #c03535;
-  box-shadow: 0 4px 14px rgba(180, 50, 50, 0.35);
+  box-shadow: 0 4px 16px rgba(180, 50, 50, 0.38);
 }
 .btn--danger:active:not(:disabled) {
   background: #641818;
 }
 
-/* Ghost — Sort, Nueva mano, acciones secundarias */
 .btn--ghost {
   background: transparent;
   color: rgba(255, 255, 255, 0.65);
@@ -96,11 +88,7 @@
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
-.btn--ghost:active:not(:disabled) {
-  background: rgba(255, 255, 255, 0.13);
-}
 
-/* Outline — Dificultad, Deck, configuración */
 .btn--outline {
   background: transparent;
   color: rgba(255, 255, 255, 0.75);
@@ -111,9 +99,6 @@
   border-color: rgba(255, 255, 255, 0.5);
   color: #fff;
 }
-.btn--outline:active:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-}
 
 /* ── Icono ──────────────────────────────────────────────── */
 .btn__icon {
@@ -121,10 +106,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 1em; /* hereda el tamaño del botón */
+  font-size: 1em;
   line-height: 1;
 }
 
-.btn__label {
-  line-height: 1;
-}
+.btn__label { line-height: 1; }
