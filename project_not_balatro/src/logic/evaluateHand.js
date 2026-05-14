@@ -33,18 +33,31 @@ function getGroups(cards) {
 
 function checkStraight(sortedValues) {
   if (sortedValues.length < 5) return false
+
   const isNormal = sortedValues.every(
     (v, i) => i === 0 || v === sortedValues[i - 1] + 1
   )
   if (isNormal) return true
-  // Rueda: A-2-3-4-5 (As con value=1)
-  return (
+
+  // Rueda: A-2-3-4-5
+  if (
     sortedValues[0] === 1 &&
     sortedValues[1] === 2 &&
     sortedValues[2] === 3 &&
     sortedValues[3] === 4 &&
     sortedValues[4] === 5
-  )
+  ) return true
+
+  // función nueva, para el caso de A-K-Q-J-10
+  if (
+    sortedValues[0] === 1  &&
+    sortedValues[1] === 10 &&
+    sortedValues[2] === 11 &&
+    sortedValues[3] === 12 &&
+    sortedValues[4] === 13
+  ) return true
+
+  return false
 }
 
 /**
