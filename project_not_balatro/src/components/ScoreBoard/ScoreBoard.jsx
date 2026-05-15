@@ -1,75 +1,50 @@
 import { useRef, useEffect } from 'react'
 import './ScoreBoard.css'
 
-const MAX_HANDS = 4
-
 /**
- * ScoreBoard — muestra puntuación acumulada, manos restantes y última mano.
+ * ScoreBoard — muestra manos restantes y descartes restantes.
  *
  * Props:
- *  - totalScore   número acumulado durante la partida
- *  - handsLeft    manos que le quedan al jugador en este ante (0-4)
- *  - lastScore    puntuación de la última mano jugada (null si no hay)
+ *  - handsLeft     manos que quedan en este ante
+ *  - maxHands      máximo de manos por ante
+ *  - discardsLeft  descartes que quedan
+ *  - maxDiscards   máximo de descartes por ante
  */
-export function ScoreBoard({ totalScore = 0, handsLeft = MAX_HANDS, lastScore = null }) {
-  const totalRef = useRef(null)
-  const prevTotal = useRef(totalScore)
-
-  // Dispara la animación de bump cuando sube la puntuación
-  useEffect(() => {
-    if (totalScore !== prevTotal.current && totalRef.current) {
-      totalRef.current.classList.remove('scoreboard__value--bump')
-      // Forzar reflow para reiniciar la animación
-      void totalRef.current.offsetWidth
-      totalRef.current.classList.add('scoreboard__value--bump')
-    }
-    prevTotal.current = totalScore
-  }, [totalScore])
-
-  const handsLow = handsLeft <= 1
+export function ScoreBoard({ handsLeft, maxHands, discardsLeft, maxDiscards }) {
+  const handsLow    = handsLeft <= 1
+  const discardsLow = discardsLeft === 0
 
   return (
-    <div className="scoreboard" role="status" aria-label="Marcador del juego">
+    <div className="scoreboard" role="status" aria-label="Estado de la ronda">
 
-      {/* Puntuación acumulada */}
+      {/* Manos */}
       <div className="scoreboard__stat">
-        <span className="scoreboard__label">Puntuación</span>
-        <span
-          ref={totalRef}
-          className="scoreboard__value scoreboard__value--total"
-        >
-          {totalScore.toLocaleString()}
+        <span className="scoreboard__label">Manos</span>
+        <span className={[
+          'scoreboard__value',
+          'scoreboard__value--hands',
+          handsLow ? 'scoreboard__value--low' : '',
+        ].filter(Boolean).join(' ')}>
+          {handsLeft}
+          <span className="scoreboard__max"> / {maxHands}</span>
         </span>
       </div>
 
       <div className="scoreboard__divider" />
 
-      {/* Manos restantes */}
+      {/* Descartes */}
       <div className="scoreboard__stat">
-        <span className="scoreboard__label">Manos</span>
-        <span
-          className={[
-            'scoreboard__value',
-            'scoreboard__value--hands',
-            handsLow ? 'scoreboard__value--hands-low' : '',
-          ].filter(Boolean).join(' ')}
-        >
-          {handsLeft} / {MAX_HANDS}
+        <span className="scoreboard__label">Descartes</span>
+        <span className={[
+          'scoreboard__value',
+          'scoreboard__value--discards',
+          discardsLow ? 'scoreboard__value--low' : '',
+        ].filter(Boolean).join(' ')}>
+          {discardsLeft}
+          <span className="scoreboard__max"> / {maxDiscards}</span>
         </span>
       </div>
 
-      {/* Última mano — solo si existe */}
-      {lastScore !== null && (
-        <>
-          <div className="scoreboard__divider" />
-          <div className="scoreboard__stat">
-            <span className="scoreboard__label">Última</span>
-            <span className="scoreboard__value scoreboard__value--last">
-              +{lastScore.toLocaleString()}
-            </span>
-          </div>
-        </>
-      )}
     </div>
   )
 }

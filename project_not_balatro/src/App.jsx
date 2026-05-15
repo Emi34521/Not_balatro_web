@@ -3,14 +3,17 @@ import { Hand }         from './components/Hand/Hand'
 import { Button }       from './components/Button/Button'
 import { ScoreDisplay } from './components/ScoreDisplay/ScoreDisplay'
 import { ScoreBoard }   from './components/ScoreBoard/ScoreBoard'
-import { usePlayHand, PLAY_PHASE } from './hooks/usePlayHand'
-import { createDeck, dealCards }   from './utils/deck'
-import { evaluateHand }            from './logic/evaluateHand'
+import { AnteInfo }     from './components/AnteInfo/AnteInfo'
+import { EndScreen }    from './components/EndScreen/EndScreen'
+import { usePlayHand }  from './hooks/usePlayHand'
+import { createDeck, dealCards }  from './utils/deck'
+import { evaluateHand }           from './logic/evaluateHand'
+import { calculateScore }         from './logic/calculateScore'
+import { MAX_HANDS, MAX_DISCARDS, MAX_ANTES, getAnteTarget } from './config/gameConfig'
 import './App.css'
 
-const SUIT_ORDER   = { spades: 0, hearts: 1, diamonds: 2, clubs: 3 }
-const MAX_HANDS    = 4
-const MAX_DISCARDS = 3
+const SUIT_ORDER = { spades: 0, hearts: 1, diamonds: 2, clubs: 3 }
+const IS_DEV = import.meta.env.DEV
 
 function createInitialState() {
   const { hand, remaining } = dealCards(createDeck(), 8)
@@ -22,14 +25,14 @@ function App() {
   const [selectedIds, setSelectedIds]       = useState([])
   const [sortMode, setSortMode]             = useState(null)
 
-  // ── Contadores de mano ─────────────────────────────────
-  const [handsLeft, setHandsLeft]     = useState(MAX_HANDS)
+  const [ante, setAnte]                 = useState(1)
+  const [handsLeft, setHandsLeft]       = useState(MAX_HANDS)
   const [discardsLeft, setDiscardsLeft] = useState(MAX_DISCARDS)
-  const [gameOver, setGameOver]         = useState(false)
+  const [anteScore, setAnteScore]       = useState(0)
+  const [bestHand, setBestHand]         = useState(null)
+  const [endState, setEndState]         = useState(null)
 
-  // ── Puntuación ─────────────────────────────────────────
-  const [totalScore, setTotalScore] = useState(0)
-  const [lastScore, setLastScore]   = useState(null)
+  const anteTarget = getAnteTarget(ante)
 
   const setHand      = h => setGameState(prev => ({ ...prev, hand: h }))
   const setRemaining = r => setGameState(prev => ({ ...prev, remaining: r }))
@@ -40,7 +43,6 @@ function App() {
     handResult, playHand, reset, isAnimating,
   } = usePlayHand({ hand, setHand, remaining, setRemaining })
 
-  // ── displayHand respeta el sort activo ─────────────────
   const displayHand = useMemo(() => {
     if (sortMode === 'rank') return [...hand].sort((a, b) => a.value - b.value)
     if (sortMode === 'suit') return [...hand].sort(
@@ -55,7 +57,7 @@ function App() {
   }, [selectedIds, hand, isAnimating])
 
   const handleCardSelect = ({ id }) => {
-    if (isAnimating) return
+    if (isAnimating || endState) return
     setSelectedIds(prev => {
       if (prev.includes(id)) return prev.filter(x => x !== id)
       if (prev.length >= 5)  return prev
@@ -64,32 +66,48 @@ function App() {
   }
 
   const handlePlayHand = useCallback(async () => {
-    if (selectedIds.length === 0 || isAnimating || handsLeft <= 0) return
+    if (selectedIds.length === 0 || isAnimating || handsLeft <= 0 || endState) return
 
-    // Calculamos el score de esta mano para actualizarlo al terminar
     const selectedCards = displayHand.filter(c => selectedIds.includes(c.id))
-    const { handType } = evaluateHand(selectedCards)
-    const { calculateScore } = await import('./logic/calculateScore')
-    const { scoringCardIds: sIds } = evaluateHand(selectedCards)
+    const { handType, handName, scoringCardIds: sIds } = evaluateHand(selectedCards)
     const scoringCards = selectedCards.filter(c => sIds.includes(c.id))
-    const { total } = calculateScore(handType, scoringCards)
+    const { baseChips, baseMult, total } = calculateScore(handType, scoringCards)
 
-    setHandsLeft(prev => prev - 1)
-    setLastScore(total)
-    setTotalScore(prev => prev + total)
+    const newHandsLeft = handsLeft - 1
+    const newAnteScore = anteScore + total
+
+    setHandsLeft(newHandsLeft)
+    setAnteScore(newAnteScore)
+    setBestHand(prev => (!prev || total > prev.total)
+      ? { handName, chips: baseChips, mult: baseMult, total }
+      : prev
+    )
 
     await playHand(selectedIds, displayHand)
     setSelectedIds([])
 
-    // Si se acabaron las manos, marcar game over tras la animación
-    setHandsLeft(prev => {
-      if (prev <= 0) setGameOver(true)
-      return prev
-    })
-  }, [selectedIds, isAnimating, handsLeft, displayHand, playHand])
+    const reachedTarget = newAnteScore >= anteTarget
+
+    if (reachedTarget) {
+      if (ante < MAX_ANTES) {
+        setAnte(a => a + 1)
+        setAnteScore(0)
+        setHandsLeft(MAX_HANDS)
+        setDiscardsLeft(MAX_DISCARDS)
+        setGameState(createInitialState())
+      } else {
+        setEndState('win')
+      }
+    } else if (newHandsLeft <= 0) {
+      setEndState('lose')
+    }
+  }, [
+    selectedIds, isAnimating, handsLeft, endState,
+    displayHand, anteScore, ante, anteTarget, playHand,
+  ])
 
   const handleDiscard = () => {
-    if (selectedIds.length === 0 || isAnimating || discardsLeft <= 0) return
+    if (selectedIds.length === 0 || isAnimating || discardsLeft <= 0 || endState) return
     const kept   = hand.filter(c => !selectedIds.includes(c.id))
     const drawn  = remaining.slice(0, selectedIds.length)
     const newRem = remaining.slice(selectedIds.length)
@@ -106,25 +124,34 @@ function App() {
     setGameState(createInitialState())
     setSelectedIds([])
     setSortMode(null)
+    setAnte(1)
     setHandsLeft(MAX_HANDS)
     setDiscardsLeft(MAX_DISCARDS)
-    setTotalScore(0)
-    setLastScore(null)
-    setGameOver(false)
+    setAnteScore(0)
+    setBestHand(null)
+    setEndState(null)
   }
+
+  // ── Debug helpers ──────────────────────────────────────
+  const debugWin  = () => setEndState('win')
+  const debugLose = () => setEndState('lose')
+
+  const isBlocked = !!endState
 
   return (
     <div className="game">
-      {/* tipografía tipo 'pixelart' similar al que utiliza el videojuego balatro */}
       <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
       <h1 className="game__title">Not Balatro</h1>
 
-      {/* ── Marcador ─────────────────────────────────────── */}
-      <ScoreBoard
-        totalScore={totalScore}
-        handsLeft={handsLeft}
-        lastScore={lastScore}
-      />
+      <div className="game__meta">
+        <AnteInfo ante={ante} target={anteTarget} anteScore={anteScore} />
+        <ScoreBoard
+          handsLeft={handsLeft}
+          maxHands={MAX_HANDS}
+          discardsLeft={discardsLeft}
+          maxDiscards={MAX_DISCARDS}
+        />
+      </div>
 
       <ScoreDisplay
         phase={phase}
@@ -135,59 +162,67 @@ function App() {
         selectedCount={selectedIds.length}
       />
 
-      {/* ── Game Over overlay ─────────────────────────────── */}
-      {gameOver && (
-        <div className="game__over">
-          <span className="game__over-label">¡Ante completado!</span>
-          <span className="game__over-score">{totalScore.toLocaleString()} pts</span>
-        </div>
-      )}
-
       <Hand
         cards={displayHand}
         selectedIds={selectedIds}
         scoringCardIds={scoringCardIds}
         activeCardId={activeCardId}
         isAnimating={isAnimating}
-        onCardSelect={gameOver ? undefined : handleCardSelect}
+        onCardSelect={isBlocked ? undefined : handleCardSelect}
       />
 
       <div className="game__actions">
-        <Button
-          variant="primary"
-          size="lg"
-          disabled={selectedIds.length === 0 || isAnimating || handsLeft <= 0 || gameOver}
-          onClick={handlePlayHand}
-        >
+        <Button variant="primary" size="lg"
+          disabled={selectedIds.length === 0 || isAnimating || handsLeft <= 0 || isBlocked}
+          onClick={handlePlayHand}>
           Play Hand
         </Button>
-        <Button
-          variant="danger"
-          size="lg"
-          disabled={selectedIds.length === 0 || isAnimating || discardsLeft <= 0 || gameOver}
-          onClick={handleDiscard}
-        >
+        <Button variant="danger" size="lg"
+          disabled={selectedIds.length === 0 || isAnimating || discardsLeft <= 0 || isBlocked}
+          onClick={handleDiscard}>
           Discard ({discardsLeft})
         </Button>
       </div>
 
       <div className="game__secondary">
-        <Button variant="outline" size="sm" disabled={isAnimating}
+        <Button variant="outline" size="sm" disabled={isAnimating || isBlocked}
           onClick={() => handleSort('rank')}
           className={sortMode === 'rank' ? 'btn--active' : ''}>
           Sort Rank
         </Button>
-        <Button variant="outline" size="sm" disabled={isAnimating}
+        <Button variant="outline" size="sm" disabled={isAnimating || isBlocked}
           onClick={() => handleSort('suit')}
           className={sortMode === 'suit' ? 'btn--active' : ''}>
           Sort Suit
         </Button>
         <Button variant="ghost" size="sm" disabled={isAnimating}
           onClick={handleNewGame}>
-          {gameOver ? 'Nueva partida' : 'Nueva mano'}
+          Nueva partida
         </Button>
         <span className="game__deck-count">{remaining.length} en mazo</span>
       </div>
+
+      {/* Botones de debug — solo en desarrollo (npm run dev) */}
+      {IS_DEV && !endState && (
+        <div className="game__debug">
+          <span className="game__debug-label">DEV</span>
+          <button className="game__debug-btn game__debug-btn--win" onClick={debugWin}>
+            ★ Win
+          </button>
+          <button className="game__debug-btn game__debug-btn--lose" onClick={debugLose}>
+            ✕ Lose
+          </button>
+        </div>
+      )}
+
+      {endState && (
+        <EndScreen
+          won={endState === 'win'}
+          ante={ante}
+          bestHand={bestHand}
+          onRestart={handleNewGame}
+        />
+      )}
     </div>
   )
 }

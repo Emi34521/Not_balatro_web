@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   padding: 2.5rem 1.5rem;
-  gap: 2.5rem;
+  gap: 2rem;
 }
 
 .game__title {
@@ -17,6 +17,14 @@
   margin: 0;
   text-shadow: 0 2px 12px rgba(232, 201, 125, 0.35);
   line-height: 1.6;
+}
+
+.game__meta {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .game__actions {
@@ -32,9 +40,9 @@
 }
 
 .game__deck-count {
-  font-size: 12px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.3);
-  font-family: system-ui, sans-serif;
+  font-family: 'Press Start 2P', monospace;
   margin-left: 0.5rem;
 }
 
@@ -43,33 +51,47 @@
   color: #e8c97d !important;
 }
 
-/* ── Game Over ──────────────────────────────────────────── */
-.game__over {
+/* ── Debug bar ──────────────────────────────────────────── */
+.game__debug {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1.2rem 2.5rem;
-  border-radius: 14px;
-  background: rgba(232, 201, 125, 0.08);
-  border: 1.5px solid rgba(232, 201, 125, 0.30);
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.game__debug-label {
   font-family: 'Press Start 2P', monospace;
-  animation: fadeSlideIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.15em;
+  margin-right: 4px;
 }
 
-.game__over-label {
-  font-size: 13px;
+.game__debug-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: opacity 0.15s ease;
+  letter-spacing: 0.05em;
+}
+
+.game__debug-btn:hover  { opacity: 0.75; }
+.game__debug-btn:active { opacity: 0.5; }
+
+.game__debug-btn--win {
+  background: rgba(232, 201, 125, 0.08);
+  border-color: rgba(232, 201, 125, 0.3);
   color: #e8c97d;
-  letter-spacing: 0.08em;
 }
 
-.game__over-score {
-  font-size: 28px;
-  color: #fff;
-  font-weight: 800;
-}
-
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: scale(0.85) translateY(-10px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+.game__debug-btn--lose {
+  background: rgba(200, 50, 50, 0.08);
+  border-color: rgba(200, 50, 50, 0.3);
+  color: #f57c7c;
 }
