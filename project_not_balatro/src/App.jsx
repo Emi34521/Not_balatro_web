@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Hand }         from './components/Hand/Hand'
 import { Button }       from './components/Button/Button'
 import { ScoreDisplay } from './components/ScoreDisplay/ScoreDisplay'
+import { JokerBar } from './components/JokerBar/JokerBar'
 import { ScoreBoard }   from './components/ScoreBoard/ScoreBoard'
 import { AnteInfo }     from './components/AnteInfo/AnteInfo'
 import { EndScreen }    from './components/EndScreen/EndScreen'
@@ -155,6 +156,8 @@ function App() {
         />
       </div>
 
+      <JokerBar jokers={activeJokers} />
+
       <ScoreDisplay
         phase={phase}
         handResult={handResult ?? (liveEval ? { handName: liveEval.handName } : null)}
@@ -162,6 +165,7 @@ function App() {
         displayMult={displayMult}
         displayTotal={displayTotal}
         selectedCount={selectedIds.length}
+        activeJokers={activeJokers}
       />
 
       <Hand

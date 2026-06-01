@@ -1,4 +1,4 @@
-import { PLAY_PHASE } from '../../hooks/usePlayHand'
+import { PLAY_PHASE } from '../../hooks/usePlayHand.js'
 import './ScoreDisplay.css'
 
 /**
@@ -20,7 +20,18 @@ export function ScoreDisplay({
   displayMult,
   displayTotal,
   selectedCount,
+  activeJokers = [],
 }) {
+  let jokerMultText = ''
+  if (activeJokers.length > 0) {
+    let bonus = 0
+    for (let i = 0; i < activeJokers.length; i++) {
+      bonus = bonus + (activeJokers[i].bonusMult || 0)
+    }
+    if (bonus > 0) {
+      jokerMultText = '+' + bonus + ' Mult (joker)'
+    }
+  }
   const isIdle = phase === PLAY_PHASE.IDLE
 
   if (isIdle && !handResult) {
@@ -31,6 +42,11 @@ export function ScoreDisplay({
             ? 'Selecciona entre 1 y 5 cartas'
             : `${selectedCount} carta${selectedCount > 1 ? 's' : ''} seleccionada${selectedCount > 1 ? 's' : ''}`}
         </span>
+        {jokerMultText !== '' && (
+          <span className="score-display__joker-hint score-display__joker-hint--idle">
+            {jokerMultText} activo
+          </span>
+        )}
       </div>
     )
   }
@@ -63,6 +79,9 @@ export function ScoreDisplay({
               <span className="score-display__value score-display__value--mult">
                 {displayMult}
               </span>
+              {jokerMultText !== '' && (
+                <span className="score-display__joker-hint">{jokerMultText}</span>
+              )}
             </div>
           </>
         )}

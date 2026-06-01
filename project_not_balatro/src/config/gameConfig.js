@@ -11,7 +11,7 @@ export const JOKERS = [
   {
     id: 'pumpkin_joker',
     name: 'Pumpkin Joker',
-    sprite: 'pumpkin_joker-a9b3e2cc-650a-4883-a23a-35b508a3cb2f.svg',
+    sprite: 'pumpkin_joker.png',
     bonusMult: 4,
   },
 ]

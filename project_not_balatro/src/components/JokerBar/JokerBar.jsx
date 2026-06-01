@@ -1,0 +1,36 @@
+import pumpkinJokerImg from '../../assets/jokers/pumpkin_joker.png'
+import './JokerBar.css'
+
+const jokerPictures = {
+  pumpkin_joker: pumpkinJokerImg,
+}
+
+export function JokerBar({ jokers }) {
+  if (!jokers || jokers.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="joker-bar">
+      {jokers.map((joker) => {
+        const pic = jokerPictures[joker.id]
+        return (
+          <div key={joker.id} className="joker-bar__card joker-bar__card--on">
+            {pic && (
+              <img
+                className="joker-bar__img"
+                src={pic}
+                alt={joker.name}
+              />
+            )}
+            <div className="joker-bar__info">
+              <span className="joker-bar__name">{joker.name}</span>
+              <span className="joker-bar__effect">+{joker.bonusMult} Mult</span>
+              <span className="joker-bar__active">ACTIVO</span>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

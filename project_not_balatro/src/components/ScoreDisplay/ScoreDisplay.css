@@ -77,6 +77,17 @@
   color: #f57c7c;
 }
 
+.score-display__joker-hint {
+  font-size: 7px;
+  color: #e8c97d;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.score-display__joker-hint--idle {
+  margin-top: 8px;
+}
+
 .score-display__value--total {
   color: #fff;
   font-size: 34px;
