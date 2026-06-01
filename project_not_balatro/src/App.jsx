@@ -9,7 +9,7 @@ import { usePlayHand }  from './hooks/usePlayHand'
 import { createDeck, dealCards }  from './utils/deck'
 import { evaluateHand }           from './logic/evaluateHand'
 import { calculateScore }         from './logic/calculateScore'
-import { MAX_HANDS, MAX_DISCARDS, MAX_ANTES, getAnteTarget } from './config/gameConfig'
+import { MAX_HANDS, MAX_DISCARDS, MAX_ANTES, getAnteTarget, JOKERS } from './config/gameConfig'
 import './App.css'
 
 const SUIT_ORDER = { spades: 0, hearts: 1, diamonds: 2, clubs: 3 }
@@ -31,6 +31,7 @@ function App() {
   const [anteScore, setAnteScore]       = useState(0)
   const [bestHand, setBestHand]         = useState(null)
   const [endState, setEndState]         = useState(null)
+  const [activeJokers]                  = useState([JOKERS[0]])
 
   const anteTarget = getAnteTarget(ante)
 
@@ -41,7 +42,7 @@ function App() {
     phase, scoringCardIds, activeCardId,
     displayChips, displayMult, displayTotal,
     handResult, playHand, reset, isAnimating,
-  } = usePlayHand({ hand, setHand, remaining, setRemaining })
+  } = usePlayHand({ hand, setHand, remaining, setRemaining, activeJokers })
 
   const displayHand = useMemo(() => {
     if (sortMode === 'rank') return [...hand].sort((a, b) => a.value - b.value)
@@ -71,7 +72,7 @@ function App() {
     const selectedCards = displayHand.filter(c => selectedIds.includes(c.id))
     const { handType, handName, scoringCardIds: sIds } = evaluateHand(selectedCards)
     const scoringCards = selectedCards.filter(c => sIds.includes(c.id))
-    const { baseChips, baseMult, total } = calculateScore(handType, scoringCards)
+    const { baseChips, baseMult, total } = calculateScore(handType, scoringCards, activeJokers)
 
     const newHandsLeft = handsLeft - 1
     const newAnteScore = anteScore + total
@@ -104,6 +105,7 @@ function App() {
   }, [
     selectedIds, isAnimating, handsLeft, endState,
     displayHand, anteScore, ante, anteTarget, playHand,
+    activeJokers,
   ])
 
   const handleDiscard = () => {

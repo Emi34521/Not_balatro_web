@@ -17,7 +17,7 @@ export const PLAY_PHASE = {
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-export function usePlayHand({ hand, setHand, remaining, setRemaining }) {
+export function usePlayHand({ hand, setHand, remaining, setRemaining, activeJokers = [] }) {
   const [phase, setPhase]                   = useState(PLAY_PHASE.IDLE)
   const [scoringCardIds, setScoringCardIds] = useState([])
   const [activeCardId, setActiveCardId]     = useState(null)
@@ -57,7 +57,7 @@ export function usePlayHand({ hand, setHand, remaining, setRemaining }) {
     // Scoring cards en el mismo orden visual
     const scoringCards = selectedCards.filter(c => scoringCardIds.includes(c.id))
 
-    const { baseChips, baseMult, cardChips } = calculateScore(handType, scoringCards)
+    const { baseChips, baseMult, cardChips } = calculateScore(handType, scoringCards, activeJokers)
 
     // Total calculado directamente (no desde estado)
     const totalCardChips = cardChips.reduce((sum, c) => sum + c.chips, 0)
@@ -119,7 +119,7 @@ export function usePlayHand({ hand, setHand, remaining, setRemaining }) {
     setHandResult(null)
     setPhase(PLAY_PHASE.IDLE)
 
-  }, [phase, hand, remaining, setHand, setRemaining])
+  }, [phase, hand, remaining, setHand, setRemaining, activeJokers])
 
   return {
     phase,
