@@ -1,8 +1,20 @@
 import pumpkinJokerImg from '../../assets/jokers/pumpkin_joker.png'
+import alienJokerImg from '../../assets/jokers/alien_joker.png'
 import './JokerBar.css'
 
 const jokerPictures = {
   pumpkin_joker: pumpkinJokerImg,
+  alien_joker: alienJokerImg,
+}
+
+function getJokerEffectText(joker) {
+  if (joker.bonusMult) {
+    return '+' + joker.bonusMult + ' Mult'
+  }
+  if (joker.bonusChips) {
+    return '+' + joker.bonusChips + ' Chips'
+  }
+  return ''
 }
 
 export function JokerBar({ jokers }) {
@@ -25,7 +37,7 @@ export function JokerBar({ jokers }) {
             )}
             <div className="joker-bar__info">
               <span className="joker-bar__name">{joker.name}</span>
-              <span className="joker-bar__effect">+{joker.bonusMult} Mult</span>
+              <span className="joker-bar__effect">{getJokerEffectText(joker)}</span>
               <span className="joker-bar__active">ACTIVO</span>
             </div>
           </div>

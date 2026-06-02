@@ -57,11 +57,10 @@ export function usePlayHand({ hand, setHand, remaining, setRemaining, activeJoke
     // Scoring cards en el mismo orden visual
     const scoringCards = selectedCards.filter(c => scoringCardIds.includes(c.id))
 
-    const { baseChips, baseMult, cardChips } = calculateScore(handType, scoringCards, activeJokers)
+    const { baseChips, baseMult, cardChips, jokerChipsBonus } = calculateScore(handType, scoringCards, activeJokers)
 
-    // Total calculado directamente (no desde estado)
     const totalCardChips = cardChips.reduce((sum, c) => sum + c.chips, 0)
-    const finalChips     = baseChips + totalCardChips
+    const finalChips     = baseChips + totalCardChips + jokerChipsBonus
     const finalTotal     = finalChips * baseMult
 
     setHandResult({ handType, handName })
@@ -69,7 +68,7 @@ export function usePlayHand({ hand, setHand, remaining, setRemaining, activeJoke
     // ── Fase 1: cartas scoring suben ──────────────────────
     setPhase(PLAY_PHASE.RAISING)
     setScoringCardIds(scoringCardIds)
-    setDisplayChips(baseChips)
+    setDisplayChips(baseChips + jokerChipsBonus)
     await wait(500)
     if (cancelRef.current) return
 

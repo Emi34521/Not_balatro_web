@@ -47,15 +47,17 @@ export function calculateScore(handType, scoringCards, activeJokers = []) {
   }))
 
   const totalCardChips = cardChipsBreakdown.reduce((sum, c) => sum + c.chips, 0)
-  const totalChips     = base.chips + totalCardChips
+  const jokerChipsBonus = activeJokers.reduce((sum, joker) => sum + (joker.bonusChips ?? 0), 0)
   const jokerMultBonus = activeJokers.reduce((sum, joker) => sum + (joker.bonusMult ?? 0), 0)
+  const totalChips     = base.chips + totalCardChips + jokerChipsBonus
   const totalMult      = base.mult + jokerMultBonus
   const total          = totalChips * totalMult
 
   return {
     baseChips:  base.chips,
     baseMult:   totalMult,
-    cardChips:  cardChipsBreakdown, // array con chips de cada carta
+    cardChips:  cardChipsBreakdown,
+    jokerChipsBonus,
     jokerMultBonus,
     totalChips,
     total,

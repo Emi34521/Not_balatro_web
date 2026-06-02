@@ -22,14 +22,20 @@ export function ScoreDisplay({
   selectedCount,
   activeJokers = [],
 }) {
-  let jokerMultText = ''
+  let jokerBonusText = ''
   if (activeJokers.length > 0) {
-    let bonus = 0
+    let multBonus = 0
+    let chipsBonus = 0
     for (let i = 0; i < activeJokers.length; i++) {
-      bonus = bonus + (activeJokers[i].bonusMult || 0)
+      multBonus = multBonus + (activeJokers[i].bonusMult || 0)
+      chipsBonus = chipsBonus + (activeJokers[i].bonusChips || 0)
     }
-    if (bonus > 0) {
-      jokerMultText = '+' + bonus + ' Mult (joker)'
+    if (multBonus > 0 && chipsBonus > 0) {
+      jokerBonusText = '+' + chipsBonus + ' Chips, +' + multBonus + ' Mult (jokers)'
+    } else if (multBonus > 0) {
+      jokerBonusText = '+' + multBonus + ' Mult (joker)'
+    } else if (chipsBonus > 0) {
+      jokerBonusText = '+' + chipsBonus + ' Chips (joker)'
     }
   }
   const isIdle = phase === PLAY_PHASE.IDLE
@@ -42,9 +48,9 @@ export function ScoreDisplay({
             ? 'Selecciona entre 1 y 5 cartas'
             : `${selectedCount} carta${selectedCount > 1 ? 's' : ''} seleccionada${selectedCount > 1 ? 's' : ''}`}
         </span>
-        {jokerMultText !== '' && (
+        {jokerBonusText !== '' && (
           <span className="score-display__joker-hint score-display__joker-hint--idle">
-            {jokerMultText} activo
+            {jokerBonusText} activo
           </span>
         )}
       </div>
@@ -79,8 +85,8 @@ export function ScoreDisplay({
               <span className="score-display__value score-display__value--mult">
                 {displayMult}
               </span>
-              {jokerMultText !== '' && (
-                <span className="score-display__joker-hint">{jokerMultText}</span>
+              {jokerBonusText !== '' && (
+                <span className="score-display__joker-hint">{jokerBonusText}</span>
               )}
             </div>
           </>

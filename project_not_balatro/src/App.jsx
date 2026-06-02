@@ -32,7 +32,7 @@ function App() {
   const [anteScore, setAnteScore]       = useState(0)
   const [bestHand, setBestHand]         = useState(null)
   const [endState, setEndState]         = useState(null)
-  const [activeJokers]                  = useState([JOKERS[0]])
+  const [activeJokers]                  = useState(JOKERS)
 
   const anteTarget = getAnteTarget(ante)
 
