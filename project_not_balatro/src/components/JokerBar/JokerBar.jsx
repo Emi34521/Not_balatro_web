@@ -2,6 +2,7 @@ import pumpkinJokerImg from '../../assets/jokers/pumpkin_joker.png'
 import alienJokerImg from '../../assets/jokers/alien_joker.png'
 import eyeJokerImg from '../../assets/jokers/eye_joker.png'
 import crocJokerImg from '../../assets/jokers/croc_joker.png'
+import carJokerImg from '../../assets/jokers/car_joker.png'
 import './JokerBar.css'
 
 const jokerPictures = {
@@ -9,6 +10,7 @@ const jokerPictures = {
   alien_joker: alienJokerImg,
   eye_joker: eyeJokerImg,
   croc_joker: crocJokerImg,
+  car_joker: carJokerImg,
 }
 
 function getJokerEffectText(joker) {
