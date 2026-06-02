@@ -26,6 +26,12 @@ export const JOKERS = [
     sprite: 'eye_joker.png',
     bonusMult: 3,
   },
+  {
+    id: 'croc_joker',
+    name: 'Croc Joker',
+    sprite: 'croc_joker.png',
+    bonusChips: 20,
+  },
 ]
 
 // Puntuación objetivo por ante (inspirado en Balatro)
