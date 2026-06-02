@@ -1,10 +1,12 @@
 import pumpkinJokerImg from '../../assets/jokers/pumpkin_joker.png'
 import alienJokerImg from '../../assets/jokers/alien_joker.png'
+import eyeJokerImg from '../../assets/jokers/eye_joker.png'
 import './JokerBar.css'
 
 const jokerPictures = {
   pumpkin_joker: pumpkinJokerImg,
   alien_joker: alienJokerImg,
+  eye_joker: eyeJokerImg,
 }
 
 function getJokerEffectText(joker) {
