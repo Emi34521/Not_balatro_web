@@ -22,7 +22,8 @@ function createInitialState() {
 }
 
 function App() {
-  const [{ hand, remaining }, setGameState] = useState(createInitialState)
+  const [screen, setScreen] = useState('menu')
+  const [{ hand, remaining }, setGameState] = useState(() => ({ hand: [], remaining: [] }))
   const [selectedIds, setSelectedIds]       = useState([])
   const [sortMode, setSortMode]             = useState(null)
 
@@ -135,6 +136,16 @@ function App() {
     setEndState(null)
   }
 
+  const handleStartGame = () => {
+    handleNewGame()
+    setScreen('game')
+  }
+
+  const handleGoMenu = () => {
+    handleNewGame()
+    setScreen('menu')
+  }
+
   // ── Debug helpers ──────────────────────────────────────
   const debugWin  = () => setEndState('win')
   const debugLose = () => setEndState('lose')
@@ -146,6 +157,17 @@ function App() {
       <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
       <h1 className="game__title">Not Balatro</h1>
 
+      {screen === 'menu' && (
+        <div className="game__menu">
+          <p className="game__menu-text">Juego de cartas</p>
+          <Button variant="primary" size="lg" onClick={handleStartGame}>
+            Jugar
+          </Button>
+        </div>
+      )}
+
+      {screen === 'game' && (
+      <>
       <div className="game__meta">
         <AnteInfo ante={ante} target={anteTarget} anteScore={anteScore} />
         <ScoreBoard
@@ -202,8 +224,8 @@ function App() {
           Sort Suit
         </Button>
         <Button variant="ghost" size="sm" disabled={isAnimating}
-          onClick={handleNewGame}>
-          Nueva partida
+          onClick={handleGoMenu}>
+          Menú
         </Button>
         <span className="game__deck-count">{remaining.length} en mazo</span>
       </div>
@@ -226,8 +248,10 @@ function App() {
           won={endState === 'win'}
           ante={ante}
           bestHand={bestHand}
-          onRestart={handleNewGame}
+          onRestart={handleStartGame}
         />
+      )}
+      </>
       )}
     </div>
   )

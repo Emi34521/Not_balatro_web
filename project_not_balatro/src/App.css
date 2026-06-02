@@ -8,6 +8,21 @@
   gap: 2rem;
 }
 
+.game__menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.game__menu-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
 .game__title {
   font-family: 'Press Start 2P', monospace;
   font-size: 4.1rem;
